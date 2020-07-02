@@ -19,21 +19,19 @@ import (
 )
 
 func main() {
-	exe, _ := os.Executable()    // 実行ファイルのフルパス
-	rootDir := filepath.Dir(exe) // 実行ファイルのあるディレクトリ
+	exe, _ := os.Executable()
+	rootDir := filepath.Dir(exe)
 
 	r := gin.Default()
-	r.Static("/results", "./results") // 静的ディレクトリとしておかないとHTMLのダウンロードリンクからアクセスできない
+	r.Static("/results", "./results")
 	r.LoadHTMLGlob("html/**/*.tmpl")
 
-	// アクセスされたらこれを表示
 	r.GET("/", func(c *gin.Context) {
 		c.HTML(http.StatusOK, "html/index.tmpl", gin.H{
 			"title": "PDF Info",
 		})
 	})
 
-	// uploadされたらこれ
 	r.POST("/", func(c *gin.Context) {
 		zipFile, err := c.FormFile("upload")
 		if err != nil {
@@ -155,10 +153,10 @@ func main() {
 		}
 	})
 
-	r.Run(":10")
+	r.Run(":12")
 }
 
-// 再帰
+
 func dirwalk(dir string) []string {
 	files, err := ioutil.ReadDir(dir)
 	if err != nil {
