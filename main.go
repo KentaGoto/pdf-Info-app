@@ -83,7 +83,7 @@ func main() {
 		defer csvFile.Close()
 
 		// resultFileのヘッダー
-		fmt.Fprintln(csvFile, "File Name" + "," + "Creator" + "," + "Producer")
+		fmt.Fprintln(csvFile, "File Name" + "," + "Creator" + "," + "Producer" + "," + "Page size")
 
 		// 再帰でPDFを処理する
 		paths := dirwalk(rootDir + `\out`)
@@ -109,16 +109,19 @@ func main() {
 				creatorRe := regexp.MustCompile(`Creator:(\s)+(.+)`)
 				var producer string
 				producerRe := regexp.MustCompile(`Producer:(\s)+(.+)`)
+				var pagesize string
+				pagesizeRe := regexp.MustCompile(`Page size:(\s)+(.+)`)
 
 				for _, s := range sArray {
 					if regexp.MustCompile(`Creator:(\s)+(.+)`).MatchString(s) == true {
 						creator = creatorRe.ReplaceAllString(s, "$2")
 						creator = strings.TrimRight(creator, "\n\r")
-						log.Println(creator)
 					} else if regexp.MustCompile(`Producer:(\s)+(.+)`).MatchString(s) == true {
 						producer = producerRe.ReplaceAllString(s, "$2")
 						producer = strings.TrimRight(producer, "\n\r")
-						log.Println(producer)
+					} else if regexp.MustCompile(`Page size:(\s)+(.+)`).MatchString(s) == true {
+						pagesize = pagesizeRe.ReplaceAllString(s, "$2")
+						pagesize = strings.TrimRight(pagesize, "\n\r")
 					}
 				}
 
@@ -126,7 +129,7 @@ func main() {
 				replacedPath := strings.Replace(path, rootDir+"\\out", "", 1)
 
 				// csvに書き込み
-				fmt.Fprintln(csvFile, replacedPath + "," + creator + "," + producer)
+				fmt.Fprintln(csvFile, replacedPath + "," + creator + "," + producer + "," + pagesize)
 			}
 		}
 
