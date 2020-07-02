@@ -85,7 +85,7 @@ func main() {
 		defer csvFile.Close()
 
 		// resultFileのヘッダー
-		fmt.Fprintln(csvFile, "File Name"+","+"Software used to convert to PDF")
+		fmt.Fprintln(csvFile, "File Name" + "," + "Creator" + "," + "Producer")
 
 		// 再帰でPDFを処理する
 		paths := dirwalk(rootDir + `\out`)
@@ -105,25 +105,30 @@ func main() {
 
 				s := string(pdfinfoOut)
 				sArray := strings.Split(s, "\n") // 改行でスプリットして配列にプッシュ
-				var info string
+
+				// pdfinfoコマンドの結果から抽出する項目
+				var creator string
+				creatorRe := regexp.MustCompile(`Creator:(\s)+(.+)`)
+				var producer string
+				producerRe := regexp.MustCompile(`Producer:(\s)+(.+)`)
+
 				for _, s := range sArray {
-					// ページカウントのパターンにマッチさせる
-					if regexp.MustCompile(`Producer:(\s)+(.+)`).MatchString(s) == true {
-						re := regexp.MustCompile(`Producer:(\s)+(.+)`) // 正規表現をコンパイル
-						info = re.ReplaceAllString(s, "$2")           // アプリケーション名のみに置換
-						log.Println(info)
+					if regexp.MustCompile(`Creator:(\s)+(.+)`).MatchString(s) == true {
+						creator = creatorRe.ReplaceAllString(s, "$2")
+						creator = strings.TrimRight(creator, "\n\r")
+						log.Println(creator)
+					} else if regexp.MustCompile(`Producer:(\s)+(.+)`).MatchString(s) == true {
+						producer = producerRe.ReplaceAllString(s, "$2")
+						producer = strings.TrimRight(producer, "\n\r")
+						log.Println(producer)
 					}
 				}
 
 				// pathから不要な文字を削除する
 				replacedPath := strings.Replace(path, rootDir+"\\out", "", 1)
-				//log.Println("Replaced path: " + replacedPath)
 
 				// csvに書き込み
-				log.Println(csvFile)
-				log.Println(replacedPath)
-				log.Println(info)
-				fmt.Fprintln(csvFile, replacedPath + "," + info)
+				fmt.Fprintln(csvFile, replacedPath + "," + creator + "," + producer)
 			}
 		}
 
