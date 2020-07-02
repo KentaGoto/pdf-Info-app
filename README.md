@@ -11,7 +11,7 @@ Currently, it still only returns some information, such as the application it wa
 > go run main.go
 ```
 
-Access http://localhost:12/ with Chrome or FireFox.
+Access http://localhost:12/
 
 ## Screen image  
 ![image](https://user-images.githubusercontent.com/10069642/86309932-d0d4b900-bc57-11ea-8a7a-f63ea82e4ed6.png)  
