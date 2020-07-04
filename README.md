@@ -2,7 +2,7 @@
 BETA BETA BETA
 
 ## Description  
-Returns multiple PDF information in CSV format. The information breakdown is a formatted version of the result of the pdfinfo command.  
+Returns multiple PDF information in CSV format. The information breakdown is a formatted version of the result of the **pdfinfo** command.  
 **Note:**  
 Currently, it still only returns some information, such as the application it was created from. Eventually, it will be modified to return other PDF information.  
 
