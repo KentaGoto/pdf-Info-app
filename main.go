@@ -83,7 +83,7 @@ func main() {
 		defer csvFile.Close()
 
 		// resultFileのヘッダー
-		fmt.Fprintln(csvFile, "File Name" + "," + "Creator" + "," + "Producer" + "," + "Page size" + "," + "Pages")
+		fmt.Fprintln(csvFile, "File Name" + "," + "Author" + "," + "Creator" + "," + "Producer" + "," + "Page size" + "," + "Pages")
 
 		// 再帰でPDFを処理する
 		paths := dirwalk(rootDir + `\out`)
@@ -105,6 +105,8 @@ func main() {
 				sArray := strings.Split(s, "\n") // 改行でスプリットして配列にプッシュ
 
 				// pdfinfoコマンドの結果から抽出する項目
+				var author string
+				authorRe := regexp.MustCompile(`Author:(\s)+(.+)`)
 				var creator string
 				creatorRe := regexp.MustCompile(`Creator:(\s)+(.+)`)
 				var producer string
@@ -115,7 +117,12 @@ func main() {
 				pagesRe := regexp.MustCompile(`Pages:(\s)+(.+)`)
 
 				for _, s := range sArray {
-					if creatorRe.MatchString(s) == true {
+					s = strings.Replace(s, ",", "_", -1) // カンマはアンスコに置換
+
+					if authorRe.MatchString(s) == true {
+						author = authorRe.ReplaceAllString(s, "$2")
+						author = strings.TrimRight(author, "\n\r")
+					} else if creatorRe.MatchString(s) == true {
 						creator = creatorRe.ReplaceAllString(s, "$2")
 						creator = strings.TrimRight(creator, "\n\r")
 					} else if producerRe.MatchString(s) == true {
@@ -134,7 +141,7 @@ func main() {
 				replacedPath := strings.Replace(path, rootDir+"\\out", "", 1)
 
 				// csvに書き込み
-				fmt.Fprintln(csvFile, replacedPath + "," + creator + "," + producer + "," + pagesize + "," + pages)
+				fmt.Fprintln(csvFile, replacedPath + "," + author + "," + creator + "," + producer + "," + pagesize + "," + pages)
 			}
 		}
 
