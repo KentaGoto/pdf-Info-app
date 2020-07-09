@@ -83,7 +83,7 @@ func main() {
 		defer csvFile.Close()
 
 		// resultFileのヘッダー
-		fmt.Fprintln(csvFile, "File Name" + "," + "Author" + "," + "Creator" + "," + "Producer" + "," + "Page size" + "," + "Pages")
+		fmt.Fprintln(csvFile, "File Name" + "," + "Author" + "," + "Creator" + "," + "Producer" + "," + "CreationDate" + "," + "ModDate" + "," + "Page size" + "," + "Pages")
 
 		// 再帰でPDFを処理する
 		paths := dirwalk(rootDir + `\out`)
@@ -111,6 +111,10 @@ func main() {
 				creatorRe := regexp.MustCompile(`Creator:(\s)+(.+)`)
 				var producer string
 				producerRe := regexp.MustCompile(`Producer:(\s)+(.+)`)
+				var creationDate string
+				creationDateRe := regexp.MustCompile(`CreationDate:(\s)+(.+)`)
+				var modDate string
+				modDateRe := regexp.MustCompile(`ModDate:(\s)+(.+)`)
 				var pagesize string
 				pagesizeRe := regexp.MustCompile(`Page size:(\s)+(.+)`)
 				var pages string
@@ -128,6 +132,12 @@ func main() {
 					} else if producerRe.MatchString(s) == true {
 						producer = producerRe.ReplaceAllString(s, "$2")
 						producer = strings.TrimRight(producer, "\n\r")
+					} else if creationDateRe.MatchString(s) == true {
+						creationDate = creationDateRe.ReplaceAllString(s, "$2")
+						creationDate = strings.TrimRight(creationDate, "\n\r")
+					} else if modDateRe.MatchString(s) == true {
+						modDate = modDateRe.ReplaceAllString(s, "$2")
+						modDate = strings.TrimRight(modDate, "\n\r")
 					} else if pagesizeRe.MatchString(s) == true {
 						pagesize = pagesizeRe.ReplaceAllString(s, "$2")
 						pagesize = strings.TrimRight(pagesize, "\n\r")
@@ -141,7 +151,7 @@ func main() {
 				replacedPath := strings.Replace(path, rootDir+"\\out", "", 1)
 
 				// csvに書き込み
-				fmt.Fprintln(csvFile, replacedPath + "," + author + "," + creator + "," + producer + "," + pagesize + "," + pages)
+				fmt.Fprintln(csvFile, replacedPath + "," + author + "," + creator + "," + producer + "," + creationDate + "," + modDate + "," + pagesize + "," + pages)
 			}
 		}
 
