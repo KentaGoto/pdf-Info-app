@@ -83,7 +83,7 @@ func main() {
 		defer csvFile.Close()
 
 		// resultFileのヘッダー
-		fmt.Fprintln(csvFile, "File Name" + "," + "Author" + "," + "Creator" + "," + "Producer" + "," + "CreationDate" + "," + "ModDate" + "," + "Page size" + "," + "Pages" + "," + "File size")
+		fmt.Fprintln(csvFile, "File Name"+","+"Author"+","+"Creator"+","+"Producer"+","+"CreationDate"+","+"ModDate"+","+"Page size"+","+"Pages"+","+"File size"+","+"PDF version")
 
 		// 再帰でPDFを処理する
 		paths := dirwalk(rootDir + `\out`)
@@ -121,6 +121,8 @@ func main() {
 				pagesRe := regexp.MustCompile(`Pages:(\s)+(.+)`)
 				var fileSize string
 				fileSizeRe := regexp.MustCompile(`File size:(\s)+(\d+)\s.+`)
+				var pdfVersion string
+				pdfVersionRe := regexp.MustCompile(`PDF version:(\s)+(.+)`)
 
 				for _, s := range sArray {
 					s = strings.Replace(s, ",", "_", -1) // カンマはアンスコに置換
@@ -149,6 +151,9 @@ func main() {
 					} else if fileSizeRe.MatchString(s) == true {
 						fileSize = fileSizeRe.ReplaceAllString(s, "$2")
 						fileSize = strings.TrimRight(fileSize, "\n\r")
+					} else if pdfVersionRe.MatchString(s) == true {
+						pdfVersion = pdfVersionRe.ReplaceAllString(s, "$2")
+						pdfVersion = strings.TrimRight(pdfVersion, "\n\r")
 					}
 				}
 
@@ -156,7 +161,7 @@ func main() {
 				replacedPath := strings.Replace(path, rootDir+"\\out", "", 1)
 
 				// csvに書き込み
-				fmt.Fprintln(csvFile, replacedPath + "," + author + "," + creator + "," + producer + "," + creationDate + "," + modDate + "," + pagesize + "," + pages + "," + fileSize)
+				fmt.Fprintln(csvFile, replacedPath+","+author+","+creator+","+producer+","+creationDate+","+modDate+","+pagesize+","+pages+","+fileSize+","+pdfVersion)
 			}
 		}
 
@@ -186,7 +191,6 @@ func main() {
 	r.Run(":12")
 }
 
-
 func dirwalk(dir string) []string {
 	files, err := ioutil.ReadDir(dir)
 	if err != nil {
@@ -212,3 +216,4 @@ func newCsvWriter(w io.Writer, bom bool) *csv.Writer {
 	}
 	return csv.NewWriter(bw)
 }
+
