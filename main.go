@@ -83,7 +83,7 @@ func main() {
 		defer csvFile.Close()
 
 		// resultFileのヘッダー
-		fmt.Fprintln(csvFile, "File Name" + "," + "Author" + "," + "Creator" + "," + "Producer" + "," + "CreationDate" + "," + "ModDate" + "," + "Page size" + "," + "Pages")
+		fmt.Fprintln(csvFile, "File Name" + "," + "Author" + "," + "Creator" + "," + "Producer" + "," + "CreationDate" + "," + "ModDate" + "," + "Page size" + "," + "Pages" + "," + "File size")
 
 		// 再帰でPDFを処理する
 		paths := dirwalk(rootDir + `\out`)
@@ -119,6 +119,8 @@ func main() {
 				pagesizeRe := regexp.MustCompile(`Page size:(\s)+(.+)`)
 				var pages string
 				pagesRe := regexp.MustCompile(`Pages:(\s)+(.+)`)
+				var fileSize string
+				fileSizeRe := regexp.MustCompile(`File size:(\s)+(\d+)\s.+`)
 
 				for _, s := range sArray {
 					s = strings.Replace(s, ",", "_", -1) // カンマはアンスコに置換
@@ -144,6 +146,9 @@ func main() {
 					} else if pagesRe.MatchString(s) == true {
 						pages = pagesRe.ReplaceAllString(s, "$2")
 						pages = strings.TrimRight(pages, "\n\r")
+					} else if fileSizeRe.MatchString(s) == true {
+						fileSize = fileSizeRe.ReplaceAllString(s, "$2")
+						fileSize = strings.TrimRight(fileSize, "\n\r")
 					}
 				}
 
@@ -151,7 +156,7 @@ func main() {
 				replacedPath := strings.Replace(path, rootDir+"\\out", "", 1)
 
 				// csvに書き込み
-				fmt.Fprintln(csvFile, replacedPath + "," + author + "," + creator + "," + producer + "," + creationDate + "," + modDate + "," + pagesize + "," + pages)
+				fmt.Fprintln(csvFile, replacedPath + "," + author + "," + creator + "," + producer + "," + creationDate + "," + modDate + "," + pagesize + "," + pages + "," + fileSize)
 			}
 		}
 
