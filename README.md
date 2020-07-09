@@ -7,7 +7,11 @@ Currently, it still only returns some information, such as the application it wa
 
 ## Usage  
 ```
-> go run main.go
+$ go build main.go
+```
+rename main.exe to pdf-Info-app.exe.
+```
+$ pdf-Info-app.exe
 ```
 
 Access http://localhost:12/
