@@ -133,8 +133,7 @@ func main() {
 				pdfVersionRe := regexp.MustCompile(`PDF version:(\s)+(.+)`)
 
 				for _, s := range sArray {
-					s = strings.Replace(s, ",", "_", -1) // カンマはアンスコに置換
-					//fmt.Println(s)
+					s = strings.Replace(s, ",", "_", -1) // Replace comma to underscore
 
 					if authorRe.MatchString(s) == true {
 						author = authorRe.ReplaceAllString(s, "$2")
