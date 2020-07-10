@@ -49,26 +49,26 @@ func main() {
 			return
 		}
 
-		// 時刻オブジェクト
+		// Time object
 		t := time.Now()
 		const layout = "2006-01-02_15-04-05"
 		tFormat := t.Format(layout)
 
-		// 結果が記載されるcsvのファイル名
+		// Result csv file name
 		resultFile := tFormat + ".csv"
 		resultFile = "results\\" + resultFile
 
-		// outフォルダを削除する
+		// Delete out folder
 		if err := os.RemoveAll("out"); err != nil {
 			fmt.Println(err)
 		}
 
-		// outフォルダを作る
+		// Make out folder
 		if err := os.Mkdir("out", 0777); err != nil {
 			fmt.Println(err)
 		}
 
-		// unzipする
+		// unzip
 		out, err3 := exec.Command("7z.exe", "x", "-y", "-o"+rootDir+"\\out", dst).CombinedOutput()
 		log.Println("7z.exe", "x", "-y", "-o"+rootDir+"\\out", dst)
 		if err3 != nil {
