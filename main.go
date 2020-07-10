@@ -12,6 +12,7 @@ import (
 	"os/exec"
 	"path/filepath"
 	"regexp"
+	"strconv"
 	"strings"
 	"time"
 
@@ -83,7 +84,7 @@ func main() {
 		defer csvFile.Close()
 
 		// resultFileのヘッダー
-		fmt.Fprintln(csvFile, "File Name"+","+"Author"+","+"Creator"+","+"Producer"+","+"CreationDate"+","+"ModDate"+","+"Page size"+","+"Pages"+","+"File size"+","+"PDF version")
+		fmt.Fprintln(csvFile, "File Name"+","+"Author"+","+"Creator"+","+"Producer"+","+"CreationDate"+","+"ModDate"+","+"Page size"+","+"Pages"+","+"File size(KB)"+","+"PDF version")
 
 		// 再帰でPDFを処理する
 		paths := dirwalk(rootDir + `\out`)
@@ -151,6 +152,9 @@ func main() {
 					} else if fileSizeRe.MatchString(s) == true {
 						fileSize = fileSizeRe.ReplaceAllString(s, "$2")
 						fileSize = strings.TrimRight(fileSize, "\n\r")
+						convertedStrInt64, _ := strconv.ParseInt(fileSize, 10, 64)
+						fileSizeKB := convertByte2KB(convertedStrInt64)
+						fileSize = strconv.FormatInt(fileSizeKB, 10)
 					} else if pdfVersionRe.MatchString(s) == true {
 						pdfVersion = pdfVersionRe.ReplaceAllString(s, "$2")
 						pdfVersion = strings.TrimRight(pdfVersion, "\n\r")
@@ -217,3 +221,8 @@ func newCsvWriter(w io.Writer, bom bool) *csv.Writer {
 	return csv.NewWriter(bw)
 }
 
+// Convert bytes to megabytes
+func convertByte2KB(fis int64) int64 {
+	fisKB := fis / 1024
+	return fisKB
+}
