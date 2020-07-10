@@ -84,7 +84,7 @@ func main() {
 		defer csvFile.Close()
 
 		// resultFileのヘッダー
-		fmt.Fprintln(csvFile, "File Name"+","+"Author"+","+"Creator"+","+"Producer"+","+"CreationDate"+","+"ModDate"+","+"Page size"+","+"Pages"+","+"File size(KB)"+","+"PDF version")
+		fmt.Fprintln(csvFile, "File Name"+","+"Author"+","+"Creator"+","+"Producer"+","+"CreationDate"+","+"ModDate"+","+"Page size"+","+"JavaScript"+","+"Pages"+","+"Encrypted"+","+"File size(KB)"+","+"PDF version")
 
 		// 再帰でPDFを処理する
 		paths := dirwalk(rootDir + `\out`)
@@ -116,10 +116,14 @@ func main() {
 				creationDateRe := regexp.MustCompile(`CreationDate:(\s)+(.+)`)
 				var modDate string
 				modDateRe := regexp.MustCompile(`ModDate:(\s)+(.+)`)
-				var pagesize string
-				pagesizeRe := regexp.MustCompile(`Page size:(\s)+(.+)`)
+				var javaScript string
+				javaScriptRe := regexp.MustCompile(`JavaScript:(\s)+(.+)`)
 				var pages string
 				pagesRe := regexp.MustCompile(`Pages:(\s)+(.+)`)
+				var encrypted string
+				encryptedRe := regexp.MustCompile(`Encrypted:(\s)+(.+)`)
+				var pagesize string
+				pagesizeRe := regexp.MustCompile(`Page size:(\s)+(.+)`)
 				var fileSize string
 				fileSizeRe := regexp.MustCompile(`File size:(\s)+(\d+)\s.+`)
 				var pdfVersion string
@@ -127,6 +131,7 @@ func main() {
 
 				for _, s := range sArray {
 					s = strings.Replace(s, ",", "_", -1) // カンマはアンスコに置換
+					fmt.Println(s)
 
 					if authorRe.MatchString(s) == true {
 						author = authorRe.ReplaceAllString(s, "$2")
@@ -146,9 +151,17 @@ func main() {
 					} else if pagesizeRe.MatchString(s) == true {
 						pagesize = pagesizeRe.ReplaceAllString(s, "$2")
 						pagesize = strings.TrimRight(pagesize, "\n\r")
+					} else if javaScriptRe.MatchString(s) == true {
+						fmt.Println("JavaScript")
+						javaScript = javaScriptRe.ReplaceAllString(s, "$2")
+						javaScript = strings.TrimRight(javaScript, "\n\r")
 					} else if pagesRe.MatchString(s) == true {
 						pages = pagesRe.ReplaceAllString(s, "$2")
 						pages = strings.TrimRight(pages, "\n\r")
+					} else if encryptedRe.MatchString(s) == true {
+						fmt.Println("Encrypted")
+						encrypted = encryptedRe.ReplaceAllString(s, "$2")
+						encrypted = strings.TrimRight(encrypted, "\n\r")
 					} else if fileSizeRe.MatchString(s) == true {
 						fileSize = fileSizeRe.ReplaceAllString(s, "$2")
 						fileSize = strings.TrimRight(fileSize, "\n\r")
@@ -165,7 +178,7 @@ func main() {
 				replacedPath := strings.Replace(path, rootDir+"\\out", "", 1)
 
 				// csvに書き込み
-				fmt.Fprintln(csvFile, replacedPath+","+author+","+creator+","+producer+","+creationDate+","+modDate+","+pagesize+","+pages+","+fileSize+","+pdfVersion)
+				fmt.Fprintln(csvFile, replacedPath+","+author+","+creator+","+producer+","+creationDate+","+modDate+","+pagesize+","+javaScript+","+pages+","+encrypted+","+fileSize+","+pdfVersion)
 			}
 		}
 
@@ -221,7 +234,7 @@ func newCsvWriter(w io.Writer, bom bool) *csv.Writer {
 	return csv.NewWriter(bw)
 }
 
-// Convert bytes to megabytes
+// Convert bytes to kilbytes
 func convertByte2KB(fis int64) int64 {
 	fisKB := fis / 1024
 	return fisKB
