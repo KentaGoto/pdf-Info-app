@@ -188,8 +188,8 @@ func main() {
 		csvFile.Close()
 
 		// nkfコマンドでBOM付きにする
-		errNkf := exec.Command("nkf.exe", "-w8", "--overwrite", rootDir+"\\"+resultFile).Run()
-		log.Println("nkf.exe", "-w8", "--overwrite", rootDir+"\\"+resultFile)
+		errNkf := exec.Command("nkf", "-w8", "--overwrite", rootDir+"\\"+resultFile).Run()
+		log.Println("nkf", "-w8", "--overwrite", rootDir+"\\"+resultFile)
 		if errNkf != nil {
 			fmt.Println("nkf command Exec Error")
 		}
