@@ -22,3 +22,4 @@ Access http://localhost:14/
 - Go
 - nkf
 - pdfinfo
+- 7zip
