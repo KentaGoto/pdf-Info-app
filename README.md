@@ -1,7 +1,7 @@
 # pdf-Info-app 
 
 ## Description  
-Returns multiple PDF information in CSV format. The information breakdown is a formatted version of the result of the **pdfinfo** command.  
+Returns multiple PDF information in CSV format. The information breakdown is a partial format of the result of the pdfinfo command.  
 
 ## Usage  
 ```
