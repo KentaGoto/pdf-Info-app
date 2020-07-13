@@ -97,7 +97,7 @@ func main() {
 				log.Println("Processing... " + path)
 
 				// pdfinfoコマンドの出力をゲットする
-				pdfinfoOut, err := exec.Command("pdfinfo", path).CombinedOutput()
+				pdfinfoOut, err := exec.Command("pdfinfo", "-isodates", path).CombinedOutput()
 				if err != nil {
 					fmt.Println("pdfinfo command Exec Error")
 				}
