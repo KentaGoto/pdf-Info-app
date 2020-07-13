@@ -1,10 +1,7 @@
 package main
 
 import (
-	"bufio"
-	"encoding/csv"
 	"fmt"
-	"io"
 	"io/ioutil"
 	"log"
 	"net/http"
@@ -227,14 +224,6 @@ func dirwalk(dir string) []string {
 	}
 
 	return paths
-}
-
-func newCsvWriter(w io.Writer, bom bool) *csv.Writer {
-	bw := bufio.NewWriter(w)
-	if bom {
-		bw.Write([]byte{0xEF, 0xBB, 0xBF})
-	}
-	return csv.NewWriter(bw)
 }
 
 // Convert bytes to kilbytes
