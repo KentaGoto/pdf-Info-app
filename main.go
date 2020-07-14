@@ -81,7 +81,7 @@ func main() {
 		defer csvFile.Close()
 
 		// resultFileのヘッダー
-		fmt.Fprintln(csvFile, "File Name"+","+"Author"+","+"Creator"+","+"Producer"+","+"CreationDate"+","+"ModDate"+","+"Page size"+","+"JavaScript"+","+"Pages"+","+"Encrypted"+","+"Page rot"+","+"File size(KB)"+","+"PDF version")
+		fmt.Fprintln(csvFile, "File Name"+","+"Author"+","+"Creator"+","+"Producer"+","+"CreationDate"+","+"ModDate"+","+"Page size"+","+"JavaScript"+","+"Pages"+","+"Encrypted"+","+"Page rot"+","+"File size(MB)"+","+"PDF version")
 
 		// 再帰でPDFを処理する
 		paths := dirwalk(rootDir + `\out`)
@@ -165,9 +165,8 @@ func main() {
 					} else if fileSizeRe.MatchString(s) == true {
 						fileSize = fileSizeRe.ReplaceAllString(s, "$2")
 						fileSize = strings.TrimRight(fileSize, "\n\r")
-						convertedStrInt64, _ := strconv.ParseInt(fileSize, 10, 64)
-						fileSizeKB := convertByte2KB(convertedStrInt64)
-						fileSize = strconv.FormatInt(fileSizeKB, 10)
+						convertedStrFloat64, _ := strconv.ParseFloat(fileSize, 64)
+						fileSize = convertByte2MB(convertedStrFloat64)
 					} else if pdfVersionRe.MatchString(s) == true {
 						pdfVersion = pdfVersionRe.ReplaceAllString(s, "$2")
 						pdfVersion = strings.TrimRight(pdfVersion, "\n\r")
@@ -226,8 +225,9 @@ func dirwalk(dir string) []string {
 	return paths
 }
 
-// Convert bytes to kilbytes
-func convertByte2KB(fis int64) int64 {
-	fisKB := fis / 1024
-	return fisKB
+// Convert bytes to megabytes
+func convertByte2MB(fis float64) string {
+	fisMB := fis / 1048576
+	fisMBstr := strconv.FormatFloat(fisMB, 'f', 2, 64)
+	return fisMBstr
 }
