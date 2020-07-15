@@ -21,7 +21,7 @@ Returns multiple PDF information in CSV format. The information breakdown is a p
 ```
 $ go build main.go
 ```
-rename main.exe to pdf-Info-app.exe.
+Example: rename main.exe to pdf-info-app.exe and run.
 ```
 $ pdf-Info-app.exe
 ```
