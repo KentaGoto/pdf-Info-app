@@ -18,14 +18,15 @@ Returns multiple PDF information in CSV format. The information breakdown is a p
 
 
 ## Usage  
+Build:
 ```
 $ go build main.go
 ```
-
+Rename:
 ```
 $ ren main.exe pdf-info-app.exe
 ```
-
+Run:
 ```
 $ pdf-Info-app.exe
 ```
