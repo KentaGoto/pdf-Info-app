@@ -1,7 +1,8 @@
 # pdf-Info-app 
 
 ## Description  
-Returns multiple PDF information in CSV format. The information breakdown is a partial format of the result of the **pdfinfo** command. The following information is returned.  
+Returns multiple PDF information in CSV format. The information breakdown is a partial format of the result of the **pdfinfo** command.
+The following information is returned.  
 - File Name
 - Author
 - Creator
