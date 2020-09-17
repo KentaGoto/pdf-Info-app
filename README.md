@@ -44,3 +44,6 @@ Access http://localhost:14/
 - nkf
 - pdfinfo
 - 7zip
+
+## License
+MIT
