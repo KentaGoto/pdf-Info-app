@@ -47,3 +47,6 @@ Access http://localhost:14/
 
 ## License
 MIT
+
+## Author  
+Kenta Goto
