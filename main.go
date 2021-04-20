@@ -38,7 +38,7 @@ func main() {
 		}
 		log.Println(zipFile.Filename)
 
-		// 特定のディレクトリにファイルをアップロードする
+		// Uploading files to a specific directory.
 		dst := rootDir + "\\uploaded" + "\\" + filepath.Base(zipFile.Filename)
 		log.Println(dst)
 		if err := c.SaveUploadedFile(zipFile, dst); err != nil {
@@ -73,27 +73,27 @@ func main() {
 		}
 		fmt.Printf("ls result: \n%s", string(out))
 
-		// resultFileを作成してオープンする
+		// Create and open a resultFile.
 		csvFile, err := os.OpenFile(resultFile, os.O_RDWR|os.O_CREATE|os.O_APPEND, 0666)
 		if err != nil {
 			log.Fatal(err)
 		}
 		defer csvFile.Close()
 
-		// resultFileのヘッダー
+		// Header of resultFile.
 		fmt.Fprintln(csvFile, "File Name"+","+"Author"+","+"Creator"+","+"Producer"+","+"CreationDate"+","+"ModDate"+","+"Page size"+","+"JavaScript"+","+"Pages"+","+"Encrypted"+","+"Page rot"+","+"File size(MB)"+","+"PDF version")
 
-		// 再帰でPDFを処理する
+		// Processing PDFs with Recursion.
 		paths := dirwalk(rootDir + `\out`)
 
 		flag := 0
 		for _, path := range paths {
-			ext := filepath.Ext(path) // ファイルの拡張子を得る
+			ext := filepath.Ext(path) // Get the file extension.
 			if ext == ".pdf" {
 				flag++
 				log.Println("Processing... " + path)
 
-				// pdfinfoコマンドの出力をゲットする
+				// Get the output of the pdfinfo command.
 				pdfinfoOut, err := exec.Command("pdfinfo", "-isodates", path).CombinedOutput()
 				if err != nil {
 					fmt.Println("pdfinfo command Exec Error")
@@ -101,9 +101,9 @@ func main() {
 
 				s := string(pdfinfoOut)
 				fmt.Println(s)
-				sArray := strings.Split(s, "\n") // 改行でスプリットして配列にプッシュ
+				sArray := strings.Split(s, "\n") // Split on a line break and push to an array.
 
-				// pdfinfoコマンドの結果から抽出する項目
+				// Items to be extracted from the results of the pdfinfo command.
 				var author string
 				authorRe := regexp.MustCompile(`Author:(\s)+(.+)`)
 				var creator string
@@ -173,17 +173,17 @@ func main() {
 					}
 				}
 
-				// pathから不要な文字を削除する
+				// Remove unnecessary characters from "path".
 				replacedPath := strings.Replace(path, rootDir+"\\out", "", 1)
 
-				// csvに書き込み
+				// Write to csv.
 				fmt.Fprintln(csvFile, replacedPath+","+author+","+creator+","+producer+","+creationDate+","+modDate+","+pagesize+","+javaScript+","+pages+","+encrypted+","+pageRot+","+fileSize+","+pdfVersion)
 			}
 		}
 
 		csvFile.Close()
 
-		// nkfコマンドでBOM付きにする
+		// Use the nkf command to add a BOM.
 		errNkf := exec.Command("nkf", "-w8", "--overwrite", rootDir+"\\"+resultFile).Run()
 		log.Println("nkf", "-w8", "--overwrite", rootDir+"\\"+resultFile)
 		if errNkf != nil {
@@ -191,11 +191,11 @@ func main() {
 		}
 
 		if flag == 0 {
-			// pdfがなかった場合はこれを返す
+			// If there is no pdf, return this.
 			c.String(http.StatusOK, "There is no pdf in the uploaded zip.")
 		} else {
-			// pdfがあった場合はcsvを返す
-			// index.tmplを書き換えて、HTMLからダウンロードさせる
+			// If there is a pdf, return a csv.
+			// Rewrite index.tmpl to make it download from HTML.
 			c.HTML(http.StatusOK, "html/index.tmpl", gin.H{
 				"title":           "PDF Info",
 				"downloadMessage": "Download: ",
